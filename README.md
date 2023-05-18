@@ -1,16 +1,19 @@
 # Описание целевого состояния приложения и его архитектуры
 - Сервисы Приложения подготовлены в виде контейнеров
-  - Контейнер UI
-  - Контейнер Crawler
-  - Контейнер MongoDB
-  - Контейнер RabbitMQ
-  - Контейнер Monitoring (Prometheus, Grafana)
+  - Контейнер ui
+  - Контейнер crawler
+  - Контейнер mongodb
+  - Контейнер rabbitmq
+  - Контейнер prometheus (Prometheus, Grafana to be)
+  - Контейнер node-exporter (Prometheus node-exporter)
 - CI/CD конвеер в gitlab, gitlab-runner
   - ВМ gitlab или роль gitlab на docker-host
+   - Контейнер gitlab
+   - Контейнер gitlab-runner
 - Репозитории 
   - Репозитории исходного кода приложения, IAC - github
   - Репозитории образов контейнеров hub.docker.com
-  - Репозитории CI/CD pipeline, исходного кода приложений - gitlab
+  - Репозитории CI/CD pipeline, исходного кода приложений - gitlab на своей ВМ
 
 # How to start - Сборка и запуск приложения
 # Настройка локального окружения на АРМ devops:
