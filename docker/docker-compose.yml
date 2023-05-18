@@ -1,0 +1,67 @@
+version: '3.3'
+services:
+  mongodb:
+    container_name: mongodb
+    hostname: mongodb
+    image: mongo:${MONGO_VERSION}
+    ports:
+      - 27017:27017/tcp 
+    volumes:
+      - mongo_db:/data/db
+    networks:
+      back_net:
+        aliases:
+          - mongodb
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:${RABBIT_VERSION}
+    environment:
+      - RABBITMQ_DEFAULT_USER=${MY_RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${MY_RABBITMQ_DEFAULT_PASS}
+    networks:
+      back_net:
+
+  crawler:
+    container_name: crawler
+    hostname: crawler
+    image: ${USER_NAME}/search_engine_crawler:${CRAWLER_ENGINE_VERSION}
+    restart: on-failure
+    depends_on:
+      - mongodb
+      - rabbitmq
+    ports:
+      - 8002:8000/tcp 
+    environment:
+      - MONGO=mongodb
+      - MONGO_PORT=27017
+      - RMQ_HOST=rabbitmq
+      - RMQ_USERNAME=${MY_RABBITMQ_DEFAULT_USER}
+      - RMQ_PASSWORD=${MY_RABBITMQ_DEFAULT_PASS}
+      - CHECK_INTERVAL=10
+      - EXCLUDE_URLS=".*github.com"   
+    networks:
+      - back_net
+      - front_net
+  ui:
+    container_name: ui
+    hostname: ui
+    image: ${USER_NAME}/search_engine_ui:${CRAWLER_UI_VERSION}
+    ports:
+      - 8000:8000/tcp
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO=mongodb
+      - MONGO_PORT=27017
+    networks:
+      - back_net
+      - front_net
+
+volumes:
+  mongo_db:
+
+networks:
+  back_net:
+  front_net:
